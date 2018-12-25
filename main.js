@@ -1,51 +1,47 @@
-// Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu } = require('electron')
+const express = require("express");
+const path = require("path");
+// const timeout = require('connect-timeout');
+const proxy = require('http-proxy-middleware');
+const app = express();
+const Win = require('./win');
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
-function createWindow() {
-  Menu.setApplicationMenu(null)
-  // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 800, height: 600})
+app.use(express.static(path.join(__dirname, 'ng-docs.github.io-master')));
 
-  // and load the index.html of the app.
-  mainWindow.loadFile('dist/index.html')
-  // mainWindow.loadURL('http://localhost:4200')
+// 超时时间
+const TIME_OUT = 30 * 1e3;
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+// 设置端口
+app.set('port', '7001');
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null
-  })
-}
+// 设置超时 返回超时响应
+// app.use(timeout(TIME_OUT));
+app.use((req, res, next) => {
+    if (!req.timedout) next();
+});
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+proxyOption = {
+    target: 'http://localhost:8080',
+    pathRewrite: {
+        '^/api/': '/' // 重写请求，api/解析为/
+    },
+    changeOrigoin: true
+};
 
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+// 静态资源路径
+app.use(express.static(path.join(__dirname, 'ng-docs.github.io-master')));
 
-app.on('activate', function () {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow()
-  }
-})
+// 反向代理
+app.use('/api/*', proxy(proxyOption));
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// 监听端口
+app.listen(app.get('port'), () => {
+    console.log(`server running @${app.get('port')}`);
+    Win.ready();
+});
+// var server = appExpress.listen(7001, '127.0.0.1', function () {
+//     var host = server.address().address;
+//     var port = server.address().port;
+//     console.log(host, port);
+//     console.log(__dirname);
+//     Win.ready();
+// });

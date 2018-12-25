@@ -5,12 +5,12 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-packager . ngAlain --win --out ./ngAlain --arch=x64 --app-version=0.0.1",
-    "mac": "electron-packager . ngAlain --mac --out ./ngAlain --app-version=0.0.1",
+    "pack": "electron-packager . ngAlain --win --out ./ngAlain --arch=x64 --overwrite --app-version=0.0.1",
+    "mac": "electron-packager . ngAlain --mac --out ./ngAlain --overwrite --app-version=0.0.1",
     "build:all": "electron-packager . --all --overwrite",
     "build:mac": "electron-packager ./ WeFlow --platform=darwin --arch=x64  --overwrite --out ./ngAlain --app-version=0.0.1",
-    "build:win64": "electron-packager ./ WeFlow --platform=win32 --arch=x64 --overwrite --out ./ngAlain --app-version=0.0.1",
-    "build:win32": "electron-packager ./ WeFlow --platform=win32 --arch=ia32 --icon=./assets/img/WeFlow.png --overwrite --out ./ngAlain --app-version=1.0.0"
+    "ngdoc:win": "electron-packager ./ NgDocWin --win --out ./ngDocWin --arch=x64 --overwrite --app-version=0.0.1",
+    "ngdoc:mac": "electron-packager ./ NgDocMac --platform=darwin --arch=x64 --overwrite --out ./ngDocMac --app-version=0.0.1"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -23,11 +23,14 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
+    "connect-timeout": "^1.9.0",
     "electron": "^3.0.7",
-    "electron-installer-dmg": "^2.0.0",
-    "electron-reload": "^1.4.0"
+    "electron-reload": "^1.4.0",
+    "http-proxy-middleware": "^0.19.1"
   },
   "dependencies": {
-    "@types/electron": "^1.6.10"
+    "@types/electron": "^1.6.10",
+    "express": "^4.16.4",
+    "path": "^0.12.7"
   }
 }
